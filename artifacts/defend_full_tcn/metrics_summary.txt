@@ -1,0 +1,131 @@
+PhantomGuard Full DEFEND Architecture
+============================================
+IID dataset: data/phantomguard_tcn_dataset/phantomguard_generate/data/phantomguard_synthetic_dataset.csv
+TCN dataset: data/phantomguard_tcn_dataset/phantomguard_generate/data/phantomguard_tcn_sequences.csv
+Realistic holdout: data/phantomguard_tcn_dataset/phantomguard_generate/data/phantomguard_realistic_holdout.csv
+IID rows: 32000
+TCN rows: 59126
+Features used: 44
+IID class balance: {'0': 15000, '1': 17000}
+TCN class balance: {'0': 38042, '1': 21084}
+Split rows: {'iid_base_train': 19200, 'iid_meta_validation': 6400, 'iid_final_test': 6400, 'tcn_train': 35304, 'tcn_validation': 11851, 'tcn_test': 11971}
+
+Internal Test Metrics
+xgboost_iid_test:
+  Accuracy: 1.0000
+  Precision: 1.0000
+  Recall: 1.0000
+  F1-score: 1.0000
+  ROC-AUC: 1.0000
+  False positive rate: 0.0000
+  Confusion matrix [[TN, FP], [FN, TP]]: [[3000, 0], [0, 3400]]
+tcn_iid_test:
+  Accuracy: 0.7642
+  Precision: 1.0000
+  Recall: 0.5562
+  F1-score: 0.7148
+  ROC-AUC: 0.8063
+  False positive rate: 0.0000
+  Confusion matrix [[TN, FP], [FN, TP]]: [[3000, 0], [1509, 1891]]
+gnn_iid_test:
+  Accuracy: 0.9953
+  Precision: 0.9973
+  Recall: 0.9938
+  F1-score: 0.9956
+  ROC-AUC: 0.9999
+  False positive rate: 0.0030
+  Confusion matrix [[TN, FP], [FN, TP]]: [[2991, 9], [21, 3379]]
+meta_iid_test:
+  Accuracy: 0.9888
+  Precision: 1.0000
+  Recall: 0.9788
+  F1-score: 0.9893
+  ROC-AUC: 1.0000
+  False positive rate: 0.0000
+  Confusion matrix [[TN, FP], [FN, TP]]: [[3000, 0], [72, 3328]]
+tcn_sequence_test:
+  Accuracy: 0.9998
+  Precision: 1.0000
+  Recall: 0.9995
+  F1-score: 0.9998
+  ROC-AUC: 1.0000
+  False positive rate: 0.0000
+  Confusion matrix [[TN, FP], [FN, TP]]: [[7684, 0], [2, 4285]]
+meta_sequence_test:
+  Accuracy: 0.8830
+  Precision: 0.7537
+  Recall: 1.0000
+  F1-score: 0.8595
+  ROC-AUC: 1.0000
+  False positive rate: 0.1823
+  Confusion matrix [[TN, FP], [FN, TP]]: [[6283, 1401], [0, 4287]]
+
+Realistic Holdout Metrics
+Rows: 40000
+xgboost:
+  Accuracy: 0.9998
+  Precision: 0.9717
+  Recall: 1.0000
+  F1-score: 0.9856
+  ROC-AUC: 1.0000
+  False positive rate: 0.0002
+  Confusion matrix [[TN, FP], [FN, TP]]: [[39753, 7], [0, 240]]
+tcn:
+  Accuracy: 0.9977
+  Precision: 1.0000
+  Recall: 0.6083
+  F1-score: 0.7565
+  ROC-AUC: 0.8227
+  False positive rate: 0.0000
+  Confusion matrix [[TN, FP], [FN, TP]]: [[39760, 0], [94, 146]]
+gnn:
+  Accuracy: 0.9973
+  Precision: 0.6928
+  Recall: 0.9958
+  F1-score: 0.8171
+  ROC-AUC: 1.0000
+  False positive rate: 0.0027
+  Confusion matrix [[TN, FP], [FN, TP]]: [[39654, 106], [1, 239]]
+meta_classifier:
+  Accuracy: 0.9998
+  Precision: 1.0000
+  Recall: 0.9708
+  F1-score: 0.9852
+  ROC-AUC: 1.0000
+  False positive rate: 0.0000
+  Confusion matrix [[TN, FP], [FN, TP]]: [[39760, 0], [7, 233]]
+
+Blended Attack Stress Test
+Rows: 1500
+xgboost:
+  Accuracy: 1.0000
+  Precision: 1.0000
+  Recall: 1.0000
+  F1-score: 1.0000
+  ROC-AUC: not defined for one-class set
+  False positive rate: 0.0000
+  Confusion matrix [[TN, FP], [FN, TP]]: [[0, 0], [0, 1500]]
+tcn:
+  Accuracy: 0.9967
+  Precision: 1.0000
+  Recall: 0.9967
+  F1-score: 0.9983
+  ROC-AUC: not defined for one-class set
+  False positive rate: 0.0000
+  Confusion matrix [[TN, FP], [FN, TP]]: [[0, 0], [5, 1495]]
+gnn:
+  Accuracy: 1.0000
+  Precision: 1.0000
+  Recall: 1.0000
+  F1-score: 1.0000
+  ROC-AUC: not defined for one-class set
+  False positive rate: 0.0000
+  Confusion matrix [[TN, FP], [FN, TP]]: [[0, 0], [0, 1500]]
+meta_classifier:
+  Accuracy: 1.0000
+  Precision: 1.0000
+  Recall: 1.0000
+  F1-score: 1.0000
+  ROC-AUC: not defined for one-class set
+  False positive rate: 0.0000
+  Confusion matrix [[TN, FP], [FN, TP]]: [[0, 0], [0, 1500]]

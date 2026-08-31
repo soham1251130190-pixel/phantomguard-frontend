@@ -1,0 +1,23 @@
+PhantomGuard DEFEND Training Summary
+========================================
+Dataset: data\phantomguard_dataset\phantomguard_synthetic_dataset.csv
+Rows: 32000
+Features used: 44
+Class balance: {'0': 15000, '1': 17000}
+
+Holdout Metrics
+Accuracy: 0.9998
+Precision: 0.9997
+Recall: 1.0000
+F1-score: 0.9999
+ROC-AUC: 1.0000
+False positive rate: 0.0003
+Confusion matrix [[TN, FP], [FN, TP]]: [[2999, 1], [0, 3400]]
+
+Blended Attack Stress Test
+Rows: 1500
+Attack types: ai_phishing+account_takeover
+Recall: 1.0000
+F1-score: 1.0000
+ROC-AUC: not defined for one-class set
+Confusion matrix [[TN, FP], [FN, TP]]: [[0, 0], [0, 1500]]

@@ -1,0 +1,58 @@
+column,dtype,block,ml_role,description
+transaction_id,string,key,key,Unique synthetic transaction identifier.
+user_id,string,key,key,Unique synthetic account/user identifier.
+timestamp,datetime,transaction,feature,Transaction timestamp (UTC).
+amount,float,transaction,feature,Transaction amount in USD-equivalent.
+currency,category,transaction,feature,ISO currency code.
+channel,category,transaction,feature,"Transaction channel (card_present, mobile_app, p2p_transfer, etc.)."
+payment_method,category,transaction,feature,"Instrument used (credit_card, upi, bank_transfer, etc.)."
+merchant_id,string,transaction,feature,Synthetic merchant identifier.
+merchant_category_code,category,transaction,feature,4-digit MCC of the merchant.
+merchant_category_desc,category,transaction,feature,Human-readable merchant category.
+merchant_risk_score,float,transaction,feature,0-1 prior risk score of the merchant (chargeback history proxy).
+device_id,string,transaction,feature,Synthetic device fingerprint identifier.
+device_type,category,transaction,feature,Device OS/form factor.
+device_fingerprint_score,float,transaction,feature,0-1 trust score for this device on this account (1 = long-trusted device).
+ip_country,category,transaction,feature,Country inferred from transaction IP.
+billing_country,category,transaction,feature,Country on file for the account.
+is_cross_border,bool,transaction,feature,True if ip_country != billing_country.
+hour_of_day,int,transaction,feature,"0-23, local-normalized hour of transaction."
+is_night_time,bool,transaction,feature,"True if hour_of_day in [0,5]."
+time_since_last_txn_sec,float,transaction,feature,Seconds since this user's previous transaction.
+txn_velocity_1h,int,transaction,feature,Count of transactions by this user in the trailing 1 hour.
+txn_velocity_24h,int,transaction,feature,Count of transactions by this user in the trailing 24 hours.
+amount_vs_user_avg_ratio,float,transaction,feature,amount / user's historical average amount.
+account_age_days,int,user,feature,Days since account creation.
+account_creation_channel,category,user,feature,How the account was opened.
+kyc_verification_level,category,user,feature,Strength of identity verification on file.
+credit_score_band,category,user,feature,Coarse credit bureau band (thin_file..super_prime).
+historical_avg_amount,float,user,feature,User's trailing 90-day average transaction amount.
+historical_txn_count,int,user,feature,User's trailing 90-day transaction count.
+num_devices_used,int,user,feature,"Distinct devices seen on this account, lifetime."
+num_linked_accounts,int,user,feature,Other accounts linked to this user's payment instrument/identity.
+behavioral_score,float,user,feature,0-1 composite behavioral-biometrics consistency score.
+login_anomaly_score,float,user,feature,0-1 anomaly score for the login preceding this transaction.
+password_reset_recent,bool,user,feature,True if password/credentials reset within last 48h.
+mfa_enabled,bool,user,feature,Whether MFA is enabled on the account.
+prior_fraud_flags,int,user,feature,Count of previous confirmed/suspected fraud flags on this account.
+shared_device_n_accounts,int,network,feature,Number of distinct accounts that have used this exact device fingerprint.
+shared_ip_n_accounts,int,network,feature,Number of distinct accounts transacting from this IP in the last 24h.
+community_cluster_id,string,network,feature,Graph-community id from the GNN's account/device/merchant graph (synthetic).
+num_beneficiaries_30d,int,network,feature,Distinct payees/beneficiaries this account paid in trailing 30 days.
+beneficiary_account_age_days,float,network,feature,Age in days of the receiving account/beneficiary relationship (low = newly added payee).
+text_similarity_to_phishing_corpus,float,genai,feature,0-1 similarity of associated message/email text to known phishing/BEC corpus (NaN if no text channel involved).
+llm_generated_content_prob,float,genai,feature,0-1 probability the associated text content was LLM-generated (NaN if not applicable).
+voice_authenticity_score,float,genai,feature,"0-1 score from a voice-liveness/anti-spoofing model, 1 = confidently human/genuine (NaN if not a voice channel)."
+deepfake_video_score,float,genai,feature,0-1 deepfake-likelihood score from video/liveness check during onboarding or step-up auth (NaN if not applicable).
+document_authenticity_score,float,genai,feature,"0-1 score from document forensics model on ID/proof-of-address docs, 1 = genuine (NaN if no document submitted)."
+image_manipulation_score,float,genai,feature,0-1 score of detected GenAI image manipulation/synthesis artifacts (NaN if not applicable).
+refund_count_30d,float,aux,feature,"Refund requests by this user in trailing 30 days (populated mainly for refund_fraud / merchant_fraud rows, else 0)."
+refund_to_purchase_ratio,float,aux,feature,Ratio of refunded amount to original purchase amount for this transaction (NaN if not a refund).
+structuring_score,float,aux,feature,0-1 score reflecting how close the amount sits just under a common reporting/review threshold.
+is_fraud,int(0/1),label,label,"Primary binary label. 1 = fraudulent/attack transaction, 0 = legitimate."
+attack_type,category,label,label,"Fine-grained label: one of the 10 attack_type ids, or 'legitimate'."
+attack_category,category,label,label,"Coarse taxonomy bucket (identity/access/social_engineering/document/merchant/network), or 'legitimate'."
+genai_capability,category,label,label,"GenAI capability that powers the attack (e.g. voice_synthesis), or 'none' for legitimate rows."
+fraud_severity,float,label,label,"0-1 soft severity/confidence score for the attack instance (0 for legitimate rows). For blended attacks this is a probabilistic combination of each component attack's severity, not just the last injector's value. Useful for cost-sensitive training or ranking review queues."
+is_blended_attack,bool,label,label,"True if this row was generated from more than one attack_type combined (e.g. 'ai_phishing+account_takeover'), False for single-vector or legitimate rows."
+ground_truth_source,category,label,metadata,"Always 'synthetic' — flags this row as generator-produced, for provenance/audit."

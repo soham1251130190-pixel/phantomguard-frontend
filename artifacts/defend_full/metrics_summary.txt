@@ -1,0 +1,63 @@
+PhantomGuard Full DEFEND Architecture
+============================================
+Dataset: data/phantomguard_dataset/phantomguard_synthetic_dataset.csv
+Rows: 32000
+Features used: 44
+Class balance: {'0': 15000, '1': 17000}
+Split rows: {'base_train': 19200, 'meta_validation': 6400, 'final_test': 6400}
+
+Final Test Metrics
+xgboost:
+  Accuracy: 1.0000
+  Precision: 1.0000
+  Recall: 1.0000
+  F1-score: 1.0000
+  ROC-AUC: 1.0000
+  False positive rate: 0.0000
+  Confusion matrix [[TN, FP], [FN, TP]]: [[3000, 0], [0, 3400]]
+tcn:
+  Accuracy: 0.9984
+  Precision: 0.9988
+  Recall: 0.9982
+  F1-score: 0.9985
+  ROC-AUC: 1.0000
+  False positive rate: 0.0013
+  Confusion matrix [[TN, FP], [FN, TP]]: [[2996, 4], [6, 3394]]
+gnn:
+  Accuracy: 0.9970
+  Precision: 0.9979
+  Recall: 0.9965
+  F1-score: 0.9972
+  ROC-AUC: 1.0000
+  False positive rate: 0.0023
+  Confusion matrix [[TN, FP], [FN, TP]]: [[2993, 7], [12, 3388]]
+meta_classifier:
+  Accuracy: 0.9995
+  Precision: 0.9994
+  Recall: 0.9997
+  F1-score: 0.9996
+  ROC-AUC: 1.0000
+  False positive rate: 0.0007
+  Confusion matrix [[TN, FP], [FN, TP]]: [[2998, 2], [1, 3399]]
+
+Blended Attack Stress Test
+xgboost:
+  Recall: 1.0000
+  F1-score: 1.0000
+  ROC-AUC: not defined for one-class set
+  Confusion matrix [[TN, FP], [FN, TP]]: [[0, 0], [0, 1500]]
+tcn:
+  Recall: 1.0000
+  F1-score: 1.0000
+  ROC-AUC: not defined for one-class set
+  Confusion matrix [[TN, FP], [FN, TP]]: [[0, 0], [0, 1500]]
+gnn:
+  Recall: 1.0000
+  F1-score: 1.0000
+  ROC-AUC: not defined for one-class set
+  Confusion matrix [[TN, FP], [FN, TP]]: [[0, 0], [0, 1500]]
+meta_classifier:
+  Recall: 1.0000
+  F1-score: 1.0000
+  ROC-AUC: not defined for one-class set
+  Confusion matrix [[TN, FP], [FN, TP]]: [[0, 0], [0, 1500]]

@@ -1,0 +1,226 @@
+{
+  "dataset": "data/phantomguard_dataset/phantomguard_synthetic_dataset.csv",
+  "rows": 32000,
+  "features": [
+    "amount",
+    "currency",
+    "channel",
+    "payment_method",
+    "merchant_category_code",
+    "merchant_category_desc",
+    "merchant_risk_score",
+    "device_type",
+    "device_fingerprint_score",
+    "ip_country",
+    "billing_country",
+    "is_cross_border",
+    "hour_of_day",
+    "is_night_time",
+    "time_since_last_txn_sec",
+    "txn_velocity_1h",
+    "txn_velocity_24h",
+    "amount_vs_user_avg_ratio",
+    "account_age_days",
+    "account_creation_channel",
+    "kyc_verification_level",
+    "credit_score_band",
+    "historical_avg_amount",
+    "historical_txn_count",
+    "num_devices_used",
+    "num_linked_accounts",
+    "behavioral_score",
+    "login_anomaly_score",
+    "password_reset_recent",
+    "mfa_enabled",
+    "prior_fraud_flags",
+    "shared_device_n_accounts",
+    "shared_ip_n_accounts",
+    "num_beneficiaries_30d",
+    "beneficiary_account_age_days",
+    "text_similarity_to_phishing_corpus",
+    "llm_generated_content_prob",
+    "voice_authenticity_score",
+    "deepfake_video_score",
+    "document_authenticity_score",
+    "image_manipulation_score",
+    "refund_count_30d",
+    "refund_to_purchase_ratio",
+    "structuring_score"
+  ],
+  "class_balance": {
+    "0": 15000,
+    "1": 17000
+  },
+  "split_rows": {
+    "base_train": 19200,
+    "meta_validation": 6400,
+    "final_test": 6400
+  },
+  "metrics": {
+    "xgboost": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "false_positive_rate": 0.0,
+      "confusion_matrix": [
+        [
+          3000,
+          0
+        ],
+        [
+          0,
+          3400
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0       1.00      1.00      1.00      3000\n           1       1.00      1.00      1.00      3400\n\n    accuracy                           1.00      6400\n   macro avg       1.00      1.00      1.00      6400\nweighted avg       1.00      1.00      1.00      6400\n"
+    },
+    "tcn": {
+      "accuracy": 0.9984375,
+      "precision": 0.9988228369629194,
+      "recall": 0.9982352941176471,
+      "f1": 0.9985289791115034,
+      "roc_auc": 0.999980294117647,
+      "false_positive_rate": 0.0013333333333333333,
+      "confusion_matrix": [
+        [
+          2996,
+          4
+        ],
+        [
+          6,
+          3394
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0       1.00      1.00      1.00      3000\n           1       1.00      1.00      1.00      3400\n\n    accuracy                           1.00      6400\n   macro avg       1.00      1.00      1.00      6400\nweighted avg       1.00      1.00      1.00      6400\n"
+    },
+    "gnn": {
+      "accuracy": 0.99703125,
+      "precision": 0.9979381443298969,
+      "recall": 0.9964705882352941,
+      "f1": 0.9972038263428992,
+      "roc_auc": 0.9999555882352941,
+      "false_positive_rate": 0.0023333333333333335,
+      "confusion_matrix": [
+        [
+          2993,
+          7
+        ],
+        [
+          12,
+          3388
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0       1.00      1.00      1.00      3000\n           1       1.00      1.00      1.00      3400\n\n    accuracy                           1.00      6400\n   macro avg       1.00      1.00      1.00      6400\nweighted avg       1.00      1.00      1.00      6400\n"
+    },
+    "meta_classifier": {
+      "accuracy": 0.99953125,
+      "precision": 0.9994119376653925,
+      "recall": 0.9997058823529412,
+      "f1": 0.9995588883987648,
+      "roc_auc": 0.9999997058823529,
+      "false_positive_rate": 0.0006666666666666666,
+      "confusion_matrix": [
+        [
+          2998,
+          2
+        ],
+        [
+          1,
+          3399
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0       1.00      1.00      1.00      3000\n           1       1.00      1.00      1.00      3400\n\n    accuracy                           1.00      6400\n   macro avg       1.00      1.00      1.00      6400\nweighted avg       1.00      1.00      1.00      6400\n"
+    }
+  },
+  "stress_metrics": {
+    "rows": 1500,
+    "attack_types": [
+      "ai_phishing+account_takeover"
+    ],
+    "xgboost": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": null,
+      "false_positive_rate": 0.0,
+      "confusion_matrix": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1500
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0       0.00      0.00      0.00         0\n           1       1.00      1.00      1.00      1500\n\n    accuracy                           1.00      1500\n   macro avg       0.50      0.50      0.50      1500\nweighted avg       1.00      1.00      1.00      1500\n"
+    },
+    "tcn": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": null,
+      "false_positive_rate": 0.0,
+      "confusion_matrix": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1500
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0       0.00      0.00      0.00         0\n           1       1.00      1.00      1.00      1500\n\n    accuracy                           1.00      1500\n   macro avg       0.50      0.50      0.50      1500\nweighted avg       1.00      1.00      1.00      1500\n"
+    },
+    "gnn": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": null,
+      "false_positive_rate": 0.0,
+      "confusion_matrix": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1500
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0       0.00      0.00      0.00         0\n           1       1.00      1.00      1.00      1500\n\n    accuracy                           1.00      1500\n   macro avg       0.50      0.50      0.50      1500\nweighted avg       1.00      1.00      1.00      1500\n"
+    },
+    "meta_classifier": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": null,
+      "false_positive_rate": 0.0,
+      "confusion_matrix": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1500
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n           0       0.00      0.00      0.00         0\n           1       1.00      1.00      1.00      1500\n\n    accuracy                           1.00      1500\n   macro avg       0.50      0.50      0.50      1500\nweighted avg       1.00      1.00      1.00      1500\n"
+    }
+  },
+  "notes": [
+    "XGBoost is trained with xgboost.XGBClassifier.",
+    "TCN is a PyTorch temporal convolution classifier over padded per-user transaction sequences.",
+    "GNN is a PyTorch GraphSAGE-style classifier using mean neighbor aggregation over transaction relationship edges.",
+    "Meta-classifier is logistic regression trained on validation-set probabilities from XGBoost, TCN, and GNN.",
+    "The dataset has almost one transaction per user, so TCN temporal history is limited by source data."
+  ]
+}

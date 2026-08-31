@@ -1,0 +1,130 @@
+{
+  "dataset": "data\\phantomguard_dataset\\phantomguard_synthetic_dataset.csv",
+  "rows": 32000,
+  "features": [
+    "amount",
+    "currency",
+    "channel",
+    "payment_method",
+    "merchant_category_code",
+    "merchant_category_desc",
+    "merchant_risk_score",
+    "device_type",
+    "device_fingerprint_score",
+    "ip_country",
+    "billing_country",
+    "is_cross_border",
+    "hour_of_day",
+    "is_night_time",
+    "time_since_last_txn_sec",
+    "txn_velocity_1h",
+    "txn_velocity_24h",
+    "amount_vs_user_avg_ratio",
+    "account_age_days",
+    "account_creation_channel",
+    "kyc_verification_level",
+    "credit_score_band",
+    "historical_avg_amount",
+    "historical_txn_count",
+    "num_devices_used",
+    "num_linked_accounts",
+    "behavioral_score",
+    "login_anomaly_score",
+    "password_reset_recent",
+    "mfa_enabled",
+    "prior_fraud_flags",
+    "shared_device_n_accounts",
+    "shared_ip_n_accounts",
+    "num_beneficiaries_30d",
+    "beneficiary_account_age_days",
+    "text_similarity_to_phishing_corpus",
+    "llm_generated_content_prob",
+    "voice_authenticity_score",
+    "deepfake_video_score",
+    "document_authenticity_score",
+    "image_manipulation_score",
+    "refund_count_30d",
+    "refund_to_purchase_ratio",
+    "structuring_score"
+  ],
+  "excluded_columns": [
+    "attack_category",
+    "attack_type",
+    "community_cluster_id",
+    "device_id",
+    "fraud_severity",
+    "genai_capability",
+    "ground_truth_source",
+    "is_blended_attack",
+    "is_fraud",
+    "merchant_id",
+    "timestamp",
+    "transaction_id",
+    "user_id"
+  ],
+  "class_balance": {
+    "0": 15000,
+    "1": 17000
+  },
+  "train_metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "roc_auc": 1.0,
+    "false_positive_rate": 0.0,
+    "confusion_matrix": [
+      [
+        12000,
+        0
+      ],
+      [
+        0,
+        13600
+      ]
+    ],
+    "classification_report": "              precision    recall  f1-score   support\n\n           0       1.00      1.00      1.00     12000\n           1       1.00      1.00      1.00     13600\n\n    accuracy                           1.00     25600\n   macro avg       1.00      1.00      1.00     25600\nweighted avg       1.00      1.00      1.00     25600\n"
+  },
+  "test_metrics": {
+    "accuracy": 0.99984375,
+    "precision": 0.9997059688326962,
+    "recall": 1.0,
+    "f1": 0.9998529627995882,
+    "roc_auc": 1.0,
+    "false_positive_rate": 0.0003333333333333333,
+    "confusion_matrix": [
+      [
+        2999,
+        1
+      ],
+      [
+        0,
+        3400
+      ]
+    ],
+    "classification_report": "              precision    recall  f1-score   support\n\n           0       1.00      1.00      1.00      3000\n           1       1.00      1.00      1.00      3400\n\n    accuracy                           1.00      6400\n   macro avg       1.00      1.00      1.00      6400\nweighted avg       1.00      1.00      1.00      6400\n"
+  },
+  "stress_metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "roc_auc": null,
+    "false_positive_rate": 0.0,
+    "confusion_matrix": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1500
+      ]
+    ],
+    "classification_report": "              precision    recall  f1-score   support\n\n           0       0.00      0.00      0.00         0\n           1       1.00      1.00      1.00      1500\n\n    accuracy                           1.00      1500\n   macro avg       0.50      0.50      0.50      1500\nweighted avg       1.00      1.00      1.00      1500\n",
+    "rows": 1500,
+    "attack_types": [
+      "ai_phishing+account_takeover"
+    ]
+  }
+}
