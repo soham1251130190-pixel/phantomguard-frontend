@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ScreenITright — Web Prototype (Member 5's part)
 
 This is the `web_app/` piece of ScreenITright: **Attack Discovery Dashboard**,
@@ -156,3 +157,6 @@ contract. As long as they match it, integration is a copy-paste of one file.
 - [ ] Rehearse a 2–3 minute live demo path: Discovery → generate an attack →
       watch it show up scored in Defense Monitor → point at the Feedback
       Loop chart as the "closed loop" story beat.
+=======
+# phantomguard-frontend
+>>>>>>> b7e947809f316df6213046faceb15a366e031626
