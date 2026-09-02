@@ -12,6 +12,7 @@ plus the shared visual identity in web_app/theme.py.
 
 import streamlit as st
 from web_app import theme
+from web_app.api_client import render_backend_sidebar
 from web_app.dashboard import render_attack_discovery, render_generation_studio
 from web_app.monitoring import render_defense_monitor
 from web_app.analytics import render_feedback_loop
@@ -48,3 +49,6 @@ st.sidebar.markdown(
     "Running on **mock data** wherever a teammate's module isn't wired in "
     "yet — see the `try/except` imports at the top of each file in `web_app/`."
 )
+
+render_backend_sidebar()
+

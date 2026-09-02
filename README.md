@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-# ScreenITright — Web Prototype (Member 5's part)
+# ScreenITright — Web Prototype (PhantomGuard Frontend)
 
 This is the `web_app/` piece of ScreenITright: **Attack Discovery Dashboard**,
 **Generation Studio**, **Defense Monitor**, and **Feedback Loop Visualization**,
@@ -157,6 +156,16 @@ contract. As long as they match it, integration is a copy-paste of one file.
 - [ ] Rehearse a 2–3 minute live demo path: Discovery → generate an attack →
       watch it show up scored in Defense Monitor → point at the Feedback
       Loop chart as the "closed loop" story beat.
-=======
-# phantomguard-frontend
->>>>>>> b7e947809f316df6213046faceb15a366e031626
+
+## 8. Connecting to Deployed Backend (e.g. on Render)
+
+The frontend automatically connects to the backend in order of preference:
+
+1. **In-App Sidebar (Instant)**: Enter your Render backend URL directly into the "🌐 Backend Connection" field in the sidebar and click **Test Health**.
+2. **Streamlit Secrets (`.streamlit/secrets.toml`)**:
+   Add to `screenitright_webapp/.streamlit/secrets.toml`:
+   ```toml
+   DEFEND_API_URL = "https://your-service.onrender.com"
+   ```
+3. **Environment Variable**:
+   Set `DEFEND_API_URL=https://your-service.onrender.com` in your shell, `.env`, or deployment platform settings (Streamlit Cloud / Vercel / Render).
