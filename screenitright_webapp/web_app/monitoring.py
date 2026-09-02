@@ -16,45 +16,55 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from web_app import theme
+from web_app.api_client import get_backend_url, DEFAULT_TIMEOUT
 
 # ── Mode 1: Direct import of real evaluator ──────────────────────────
 try:
     from defend.evaluator import get_live_scored_feed as _real_feed
-    _FEED_MODE = "model"
 except ImportError:
     _real_feed = None
-    _FEED_MODE = None
-
-# ── Mode 2: API fetch from deployed backend ──────────────────────────
-DEFEND_API_URL = os.environ.get("DEFEND_API_URL", "").rstrip("/")
-
-if DEFEND_API_URL:
-    _FEED_MODE = "api"
 
 
-def _fetch_from_api(n: int) -> pd.DataFrame:
+def _get_active_feed_mode() -> tuple[str, str]:
+    """Determine the active feed mode and description."""
+    api_url = get_backend_url()
+    if api_url:
+        return "api", api_url
+    if _real_feed is not None:
+        return "model", "Local DEFEND ensemble"
+    return "mock", "Simulated mock data"
+
+
+def _fetch_from_api(n: int, api_url: str) -> pd.DataFrame:
     """Fetch scored feed from the deployed DEFEND API."""
     import requests
+
+    if not api_url.startswith("http://") and not api_url.startswith("https://"):
+        api_url = f"https://{api_url}"
+
     try:
-        resp = requests.get(f"{DEFEND_API_URL}/api/live-feed", params={"n": n}, timeout=30)
+        resp = requests.get(f"{api_url}/api/live-feed", params={"n": n}, timeout=DEFAULT_TIMEOUT)
         resp.raise_for_status()
-        data = resp.json()["transactions"]
+        data = resp.json().get("transactions", [])
         return pd.DataFrame(data)
+    except requests.exceptions.Timeout:
+        st.warning(
+            f"Render backend at `{api_url}` took too long to respond. "
+            "If your Render service was sleeping, it may take 30-50s to wake up. Falling back to mock data."
+        )
+        from web_app.mock_data import generate_realtime_feed
+        return generate_realtime_feed(n)
     except Exception as e:
-        st.warning(f"API fetch failed ({e}), falling back to mock data.")
+        st.warning(f"API fetch from `{api_url}` failed ({e}), falling back to mock data.")
         from web_app.mock_data import generate_realtime_feed
         return generate_realtime_feed(n)
 
 
-# ── Mode 3: Mock data fallback ───────────────────────────────────────
-if _FEED_MODE is None:
-    _FEED_MODE = "mock"
-
-
 def _get_feed(n: int) -> pd.DataFrame:
-    if _FEED_MODE == "api":
-        return _fetch_from_api(n)
-    if _FEED_MODE == "model" and _real_feed is not None:
+    mode, target = _get_active_feed_mode()
+    if mode == "api":
+        return _fetch_from_api(n, target)
+    if mode == "model" and _real_feed is not None:
         return _real_feed(n)
     from web_app.mock_data import generate_realtime_feed
     return generate_realtime_feed(n)
@@ -65,12 +75,13 @@ def render_defense_monitor():
     st.caption("PILLAR 3 · REAL-TIME SCORING FROM THE ENSEMBLE DETECTION MODEL")
 
     # Show connection mode
+    mode, target = _get_active_feed_mode()
     mode_labels = {
-        "model": ("🟢 LIVE MODEL", "Scoring with trained DEFEND ensemble"),
-        "api": ("🔵 API MODE", f"Fetching from {DEFEND_API_URL}"),
-        "mock": ("🟡 DEMO MODE", "Using simulated mock data"),
+        "model": ("🟢 LIVE MODEL", "Scoring with local DEFEND ensemble"),
+        "api": ("🔵 RENDER API MODE", f"Connected to `{target}`"),
+        "mock": ("🟡 DEMO MODE", "Using simulated mock data (configure Render URL in sidebar to connect live)"),
     }
-    label, desc = mode_labels[_FEED_MODE]
+    label, desc = mode_labels[mode]
     st.caption(f"{label} — {desc}")
 
     col_a, col_b = st.columns([1, 3])
