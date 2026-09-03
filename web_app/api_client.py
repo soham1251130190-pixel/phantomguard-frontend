@@ -150,6 +150,34 @@ def scan_text_api(text: str, category: str = "user", evolve: bool = False, url: 
         return {"error": str(e)}
 
 
+def identify_threat_api(
+    fraud_pattern: str,
+    genai_capability: str,
+    payment_vulnerability: str,
+    url: str | None = None,
+) -> dict:
+    """Call /api/identify on the deployed Render backend."""
+    target = (url or get_backend_url()).strip().rstrip("/")
+    if not target:
+        return {"error": "No backend URL configured"}
+    if not target.startswith("http://") and not target.startswith("https://"):
+        target = f"https://{target}"
+    try:
+        resp = requests.post(
+            f"{target}/api/identify",
+            json={
+                "fraud_pattern": fraud_pattern,
+                "genai_capability": genai_capability,
+                "payment_vulnerability": payment_vulnerability,
+            },
+            timeout=30,
+        )
+        resp.raise_for_status()
+        return resp.json()
+    except Exception as e:
+        return {"error": str(e)}
+
+
 def render_backend_sidebar():
     """
     Renders a dedicated Backend Connection widget in the Streamlit sidebar.

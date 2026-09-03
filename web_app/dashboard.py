@@ -101,7 +101,49 @@ def render_attack_discovery():
                 "feasibility": row["feasibility"],
                 "impact_score": row["impact_score"],
             })
+
+    # ── Live Threat Miner with Groq Backend ──────────────────────────
+    with st.expander("⚡ Mine Threat with Groq API (/api/identify)", expanded=False):
+        st.caption("Generate new synthetic threat models using your deployed Groq LLM on Render.")
+        from web_app.api_client import identify_threat_api
+        tm_col1, tm_col2, tm_col3 = st.columns(3)
+        with tm_col1:
+            tm_pattern = st.text_input("Fraud Pattern", value="synthetic_identity", key="tm_pattern")
+        with tm_col2:
+            tm_capability = st.text_input("GenAI Capability", value="deepfake", key="tm_capability")
+        with tm_col3:
+            tm_vuln = st.text_input("Payment Vulnerability", value="otp_bypass", key="tm_vuln")
+
+        if st.button("Generate Threat Model with Groq", type="primary", key="btn_mine_groq"):
+            with st.spinner("Querying Groq LLM on Render backend..."):
+                mine_res = identify_threat_api(
+                    fraud_pattern=tm_pattern,
+                    genai_capability=tm_capability,
+                    payment_vulnerability=tm_vuln,
+                )
+            if "error" in mine_res:
+                st.error(f"Threat mining failed: {mine_res['error']}")
+            else:
+                st.session_state["last_mined_threat"] = mine_res
+                st.success("New threat vector discovered by Groq backend!")
+
+        if "last_mined_threat" in st.session_state:
+            mt = st.session_state["last_mined_threat"]
+            st.markdown(f"#### {mt.get('attack_name', 'Mined Threat')}")
+            st.write(mt.get("description", ""))
+            mc1, mc2, mc3, mc4 = st.columns(4)
+            mc1.metric("Risk Score", mt.get("risk_score", "N/A"))
+            mc2.metric("Severity", f"{mt.get('severity_score', 'N/A')}/10")
+            mc3.metric("Feasibility", f"{mt.get('feasibility_score', 'N/A')}/10")
+            mc4.metric("Novelty", f"{mt.get('novelty_score', 'N/A')}/10")
+
+            if mt.get("attack_signals"):
+                st.markdown("**Key Attack Signals Detected:**")
+                for sig in mt["attack_signals"]:
+                    st.markdown(f"- `{sig}`")
+
     return filtered
+
 
 
 def render_generation_studio(attacks_df: pd.DataFrame):

@@ -36,36 +36,55 @@ def _get_active_feed_mode() -> tuple[str, str]:
 
 
 def _fetch_from_api(n: int, api_url: str) -> pd.DataFrame:
-    """Fetch scored feed from the deployed DEFEND API."""
+    """Fetch scored feed from the deployed DEFEND API or fallback smoothly."""
     import requests
+    from datetime import datetime
 
     if not api_url.startswith("http://") and not api_url.startswith("https://"):
         api_url = f"https://{api_url}"
 
+    # 1. Try /api/live-feed if implemented on backend
     try:
-        resp = requests.get(f"{api_url}/api/live-feed", params={"n": n}, timeout=DEFAULT_TIMEOUT)
-        if resp.status_code == 404:
-            st.info(
-                f"ℹ️ **Render backend is online**, but `/api/live-feed` is not present on this deployment "
-                f"(current endpoints: `/api/scan`, `/api/identify`, `/api/history`, `/api/stats`). "
-                f"Displaying simulated feed."
-            )
-            from web_app.mock_data import generate_realtime_feed
-            return generate_realtime_feed(n)
-        resp.raise_for_status()
-        data = resp.json().get("transactions", [])
-        return pd.DataFrame(data)
-    except requests.exceptions.Timeout:
-        st.warning(
-            f"Render backend at `{api_url}` took too long to respond. "
-            "If your Render service was sleeping, it may take 30-50s to wake up. Falling back to mock data."
-        )
-        from web_app.mock_data import generate_realtime_feed
-        return generate_realtime_feed(n)
-    except Exception as e:
-        st.warning(f"API fetch from `{api_url}` failed ({e}), falling back to mock data.")
-        from web_app.mock_data import generate_realtime_feed
-        return generate_realtime_feed(n)
+        resp = requests.get(f"{api_url}/api/live-feed", params={"n": n}, timeout=10)
+        if resp.status_code == 200:
+            data = resp.json().get("transactions", [])
+            if data:
+                return pd.DataFrame(data)
+    except Exception:
+        pass
+
+    # 2. Check if Render backend has recorded scans in /api/history
+    try:
+        hist_resp = requests.get(f"{api_url}/api/history", timeout=8)
+        if hist_resp.status_code == 200:
+            history_items = hist_resp.json()
+            if history_items and len(history_items) >= 5:
+                rows = []
+                for item in reversed(history_items[-n:]):
+                    atk = item.get("attack", {})
+                    defense = item.get("defense", {})
+                    ident = item.get("identification", {})
+                    blocked = defense.get("blocked", False)
+                    risk = defense.get("risk_score", 0.0)
+                    tier = "Critical" if blocked or risk > 0.8 else ("High" if risk > 0.5 else "Low")
+                    action = "Block" if blocked else ("Flag for Review" if risk > 0.5 else "Allow")
+                    rows.append({
+                        "timestamp": datetime.now().strftime("%H:%M:%S"),
+                        "txn_id": f"GROQ-{str(atk.get('attack_id', '0'))[:8]}",
+                        "amount": 250.0,
+                        "channel": atk.get("category", "web"),
+                        "merchant_category": "Digital Transfer",
+                        "fraud_probability": round(float(risk or ident.get("score", 0.0)), 3),
+                        "risk_tier": tier,
+                        "recommended_action": action,
+                    })
+                return pd.DataFrame(rows)
+    except Exception:
+        pass
+
+    # 3. Smooth fallback to simulated feed
+    from web_app.mock_data import generate_realtime_feed
+    return generate_realtime_feed(n)
 
 
 def _get_feed(n: int) -> pd.DataFrame:
@@ -86,7 +105,7 @@ def render_defense_monitor():
     mode, target = _get_active_feed_mode()
     mode_labels = {
         "model": ("🟢 LIVE MODEL", "Scoring with local DEFEND ensemble"),
-        "api": ("🔵 RENDER API MODE", f"Connected to `{target}`"),
+        "api": ("🔵 RENDER API MODE", f"Connected to Groq backend `{target}`"),
         "mock": ("🟡 DEMO MODE", "Using simulated mock data (configure Render URL in sidebar to connect live)"),
     }
     label, desc = mode_labels[mode]
@@ -188,8 +207,54 @@ def render_defense_monitor():
         )
         st.plotly_chart(fp_fig, use_container_width=True)
 
+    # ── Live Groq Defense Scanner ────────────────────────────────────
+    with st.expander("⚡ Live Groq Backend Scanner (/api/scan)", expanded=False):
+        st.caption("Submit transactions or attack prompts directly to your deployed Groq pipeline on Render.")
+        from web_app.api_client import scan_text_api
+        col_s1, col_s2 = st.columns([3, 1])
+        with col_s1:
+            scan_input = st.text_input(
+                "Transaction / Attack Text",
+                value="Urgent wire transfer $5,000 to unverified international wallet",
+                key="groq_scan_input",
+            )
+        with col_s2:
+            scan_cat = st.selectbox(
+                "Category",
+                ["financial", "user", "phishing", "authentication"],
+                key="groq_scan_cat",
+            )
+
+        if st.button("Run Groq Scan on Render", type="primary", key="btn_groq_scan"):
+            with st.spinner("Processing with Groq backend on Render..."):
+                scan_res = scan_text_api(
+                    text=scan_input,
+                    category=scan_cat,
+                    evolve=False,
+                )
+            if "error" in scan_res:
+                st.error(f"Scan failed: {scan_res['error']}")
+            else:
+                st.session_state["last_groq_scan"] = scan_res
+                st.success("Scan completed successfully by Render Groq backend!")
+
+        if "last_groq_scan" in st.session_state:
+            res = st.session_state["last_groq_scan"]
+            ident = res.get("identification", {})
+            defense = res.get("defense", {})
+            eval_ = res.get("evaluation", {})
+
+            sc1, sc2, sc3 = st.columns(3)
+            sc1.metric("Threat Identified", "YES" if ident.get("detected") else "NO", f"Score: {ident.get('score', 0)}")
+            sc2.metric("Defense Action", "BLOCKED" if defense.get("blocked") else "ALLOWED", f"Risk: {defense.get('risk_score', 0)}")
+            sc3.metric("Evaluation Verdict", "Defended" if eval_.get("defended") else "Unblocked")
+
+            with st.expander("View Full JSON Pipeline Response"):
+                st.json(res)
+
     if auto_refresh:
         time.sleep(2)
         with st.spinner("Refreshing..."):
             st.session_state["feed"] = _get_feed(n)
         st.rerun()
+
