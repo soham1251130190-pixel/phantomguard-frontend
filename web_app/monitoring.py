@@ -44,6 +44,14 @@ def _fetch_from_api(n: int, api_url: str) -> pd.DataFrame:
 
     try:
         resp = requests.get(f"{api_url}/api/live-feed", params={"n": n}, timeout=DEFAULT_TIMEOUT)
+        if resp.status_code == 404:
+            st.info(
+                f"ℹ️ **Render backend is online**, but `/api/live-feed` is not present on this deployment "
+                f"(current endpoints: `/api/scan`, `/api/identify`, `/api/history`, `/api/stats`). "
+                f"Displaying simulated feed."
+            )
+            from web_app.mock_data import generate_realtime_feed
+            return generate_realtime_feed(n)
         resp.raise_for_status()
         data = resp.json().get("transactions", [])
         return pd.DataFrame(data)
